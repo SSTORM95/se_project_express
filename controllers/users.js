@@ -21,7 +21,7 @@ module.exports.getUser = (req, res) => {
           .status(ERROR_CODES.NOT_FOUND)
           .send({ message: ERROR_MESSAGES.NOT_FOUND });
       }
-      res.send(user);
+       res.send(user);
     })
     .catch((err) => {
       console.error(err);
@@ -41,7 +41,7 @@ module.exports.createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {

@@ -18,7 +18,7 @@ module.exports.createClothingItems = (req, res) => {
 
   clothingItem
     .create({ name, weather, imageUrl, owner })
-    .then((clothingItems) => res.status(200).send(clothingItems))
+    .then((clothingItems) => res.send(clothingItems))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
