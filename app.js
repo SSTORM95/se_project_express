@@ -12,14 +12,15 @@ mongoose.connect('mongodb://127.0.0.1:27017/wtwr_db', {
   useUnifiedTopology: true,
 });
 app.use(express.json());
-app.use("/", routes);
-
 app.use((req, res, next) => {
   req.user = {
     _id: '66d177d0647920967d746a94'
   };
   next();
 });
+
+app.use("/", routes);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
