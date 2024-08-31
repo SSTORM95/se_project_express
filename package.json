@@ -16,5 +16,7 @@
     "lint": "npx eslint .",
     "start": "nodemon app.js",
     "dev": "nodemon --open"
-  }
+  },
+  "name": "se_project_express",
+  "author": "Daniel Sida"
 }
