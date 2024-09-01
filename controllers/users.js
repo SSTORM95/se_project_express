@@ -21,7 +21,7 @@ module.exports.getUser = (req, res) => {
           .status(ERROR_CODES.NOT_FOUND)
           .send({ message: ERROR_MESSAGES.NOT_FOUND });
       }
-       res.send(user);
+       return res.send(user);
     })
     .catch((err) => {
       console.error(err);
