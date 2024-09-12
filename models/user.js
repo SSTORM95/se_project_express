@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({

@@ -1,8 +1,9 @@
-const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const User = require("../models/user");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const JWT_SECRET = require("../utils/config");
-const jwt = require("jsonwebtoken");
+
 
 module.exports.getUsers = (req, res) => {
   User.find({})

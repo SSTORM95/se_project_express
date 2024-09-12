@@ -9,8 +9,9 @@ module.exports.getClothingItems = (req, res) => {
       console.error(err);
       res
         .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR })})
-    };
+        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+    });
+};
 
 module.exports.createClothingItems = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -36,15 +37,25 @@ module.exports.createClothingItems = (req, res) => {
 module.exports.deleteClothingItems = (req, res) => {
   const { itemId } = req.params;
   const userId = req.user._id;
-  if (item.owner.toString() !== userId) {
-    return res
-      .status(ERROR_CODES.FORBIDDEN)
-      .send({ message: ERROR_MESSAGES.FORBIDDEN });
-  }
-  return clothingItem
-    .findByIdAndDelete(itemId)
+
+  clothingItem
+    .findById(itemId)
     .orFail()
-    .then((clothingItems) => res.send(clothingItems))
+    .then((item) => {
+      if (item.owner.toString() !== userId) {
+        return res
+          .status(ERROR_CODES.FORBIDDEN)
+          .send({ message: ERROR_MESSAGES.FORBIDDEN });
+      }
+      return clothingItem.findByIdAndRemove(itemId)
+      .then((deletedItem) => res.status(200).send(deletedItem))
+      .catch((err) => {
+        console.error(err);
+        return res
+          .status(ERROR_CODES.SERVER_ERROR)
+          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+      });
+  })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -63,7 +74,7 @@ module.exports.deleteClothingItems = (req, res) => {
     });
 };
 
-module.exports.likeItem = (req, res) =>{
+module.exports.likeItem = (req, res) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,
@@ -90,14 +101,15 @@ module.exports.likeItem = (req, res) =>{
     });
 };
 
-module.exports.dislikeItem = (req, res) =>{
-  clothingItem.findByIdAndUpdate(
-    req.params.itemId,
-    { $pull: { likes: req.user._id } },
-    { new: true }
-  )
-  .orFail()
-  .then((clothingItems) => res.send(clothingItems))
+module.exports.dislikeItem = (req, res) => {
+  clothingItem
+    .findByIdAndUpdate(
+      req.params.itemId,
+      { $pull: { likes: req.user._id } },
+      { new: true }
+    )
+    .orFail()
+    .then((clothingItems) => res.send(clothingItems))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
