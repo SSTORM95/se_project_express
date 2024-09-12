@@ -60,11 +60,11 @@ module.exports.login = (req, res) => {
       if (err.message === "Incorrect email or password") {
         res
           .status(ERROR_CODES.UNAUTHORIZED)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+          .send({ message: "Incorrect email or password" });
       } else {
         res
           .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: "Incorrect email or password" });
+          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
       }
     });
 };
