@@ -12,7 +12,7 @@ module.exports.auth = (req, res, next) => {
       .send({ message: "Authorization required" });
   }
 
-  const token = authorization.replace("Bearer ");
+  const token = authorization.replace("Bearer ", "");
   let payload;
   try {
     payload = jwt.verify(token, JWT_SECRET);
