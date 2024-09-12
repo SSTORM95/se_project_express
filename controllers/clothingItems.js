@@ -35,7 +35,13 @@ module.exports.createClothingItems = (req, res) => {
 
 module.exports.deleteClothingItems = (req, res) => {
   const { itemId } = req.params;
-  clothingItem
+  const userId = req.user._id;
+  if (item.owner.toString() !== userId) {
+    return res
+      .status(ERROR_CODES.FORBIDDEN)
+      .send({ message: ERROR_MESSAGES.FORBIDDEN });
+  }
+  return clothingItem
     .findByIdAndDelete(itemId)
     .orFail()
     .then((clothingItems) => res.send(clothingItems))
