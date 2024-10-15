@@ -1,15 +1,14 @@
+const BadRequestError = require("../errors/badRequestError");
+const ForbiddenError = require("../errors/forbiddenError");
+const NotFoundError = require("../errors/notFoundError");
 const clothingItem = require("../models/clothingItem");
-const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 
 module.exports.getClothingItems = (req, res) => {
   clothingItem
     .find({})
     .then((clothingItems) => res.send(clothingItems))
     .catch((err) => {
-      console.error(err);
-      res
-        .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+      next(err)
     });
 };
 
@@ -23,13 +22,9 @@ module.exports.createClothingItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+        next(new BadRequestError("Invalid data"));
       } else {
-        res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+        next(err)
       }
     });
 };
@@ -43,33 +38,22 @@ module.exports.deleteClothingItems = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
-        return res
-          .status(ERROR_CODES.FORBIDDEN)
-          .send({ message: ERROR_MESSAGES.FORBIDDEN });
+        next(new ForbiddenError("You don't have permission to access this resource"));
       }
       return clothingItem.findByIdAndRemove(itemId)
       .then((deletedItem) => res.status(200).send(deletedItem))
       .catch((err) => {
-        console.error(err);
-        return res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+        next(err);
       });
   })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+        next(new NotFoundError("Resource not found"));
       } else if (err.name === "CastError") {
-        res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+        next(new BadRequestError("The id string is in an invalid format"));
       } else {
-        res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+       next(err);
       }
     });
 };
@@ -86,17 +70,11 @@ module.exports.likeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+        next(new NotFoundError("Resource not found"));
       } else if (err.name === "CastError") {
-        res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+        next(new BadRequestError("The id string is in an invalid format"));
       } else {
-        res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+       next(err);
       }
     });
 };
@@ -113,17 +91,12 @@ module.exports.dislikeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+        next(new NotFoundError("Resource not found"));
       } else if (err.name === "CastError") {
-        res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+        next(new BadRequestError("The id string is in an invalid format"));
       } else {
-        res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+        next(err);
       }
     });
 };
+

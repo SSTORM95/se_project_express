@@ -3,14 +3,16 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
+const BadRequestError = require("../errors/badRequestError");
+const ConflictError = require("../errors/conflictError");
+const UnauthorizedError = require("../errors/unauthorizedError");
+const NotFoundError = require("../errors/notFoundError");
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
   if (!name || !avatar || !email || !password) {
-    return res
-      .status(ERROR_CODES.BAD_REQUEST)
-      .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+    throw new BadRequestError('Invalid data');
   }
 
   return bcrypt
@@ -24,18 +26,12 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
-        return res
-          .status(ERROR_CODES.CONFLICT)
-          .send({ message: "User with this email already exists." });
+        throw new ConflictError('A user with this email already exists. Please choose a different email');
       }
       if (err.name === "ValidationError") {
-        res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+        next(new BadRequestError("Invalid data"));
       }
-      return res
-        .status(ERROR_CODES.SERVER_ERROR)
-        .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+      next(err);
     });
 };
 
@@ -43,9 +39,7 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(ERROR_CODES.BAD_REQUEST)
-      .send({ message: "Email and password are required." });
+    next(new BadRequestError("Email and password are required."));
   }
 
   return User.findUserByCredentials(email, password)
@@ -58,13 +52,9 @@ module.exports.login = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        res
-          .status(ERROR_CODES.UNAUTHORIZED)
-          .send({ message: "Incorrect email or password" });
+        next(new UnauthorizedError("Incorrect email or password"));
       } else {
-        res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+        next(err);
       }
     });
 };
@@ -75,22 +65,16 @@ module.exports.getCurrentUser = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+        next(new NotFoundError("Resource not found"));
       }
       return res.send(user);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+        next(new BadRequestError("The id string is in an invalid format"));
       } else {
-        res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+       next(err);
       }
     });
 };
@@ -105,22 +89,16 @@ module.exports.updateUser = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res
-          .status(ERROR_CODES.NOT_FOUND)
-          .send({ message: ERROR_MESSAGES.NOT_FOUND });
+        next(new NotFoundError("Resource not found"));
       }
       return res.send(user);
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res
-          .status(ERROR_CODES.BAD_REQUEST)
-          .send({ message: ERROR_MESSAGES.BAD_REQUEST });
+        next(new BadRequestError("Invalid data"));
       } else {
-        res
-          .status(ERROR_CODES.SERVER_ERROR)
-          .send({ message: ERROR_MESSAGES.SERVER_ERROR });
+        next(err);
       }
     });
 };
