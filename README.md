@@ -13,3 +13,9 @@ On this project we are creating the server side for the clothing items of the WT
 - Module Exports
 - Schema Models
 - Controllers
+
+# Link for deployed project
+
+https://wtwrsida.twilightparadox.com
+https://www.wtwrsida.twilightparadox.com
+https://api.wtwrsida.twilightparadox.com
