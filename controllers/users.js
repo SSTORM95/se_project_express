@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const { ERROR_CODES, ERROR_MESSAGES } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 const BadRequestError = require("../errors/badRequestError");
 const ConflictError = require("../errors/conflictError");
@@ -10,10 +9,6 @@ const NotFoundError = require("../errors/notFoundError");
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-
-  if (!name || !avatar || !email || !password) {
-    throw new BadRequestError('Invalid data');
-  }
 
   return bcrypt
     .hash(password, 10)
@@ -26,7 +21,8 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
-        throw new ConflictError('A user with this email already exists. Please choose a different email');
+        
+        next(new ConflictError('A user with this email already exists. Please choose a different email'));
       }
       if (err.name === "ValidationError") {
         next(new BadRequestError("Invalid data"));

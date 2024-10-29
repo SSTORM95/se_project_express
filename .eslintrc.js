@@ -3,7 +3,11 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ["eslint:recommended", "airbnb-base", "prettier"],
+  extends: [
+    "eslint:recommended",
+    "airbnb-base",
+    "prettier"
+  ],
   overrides: [
     {
       env: {

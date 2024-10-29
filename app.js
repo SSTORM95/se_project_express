@@ -1,10 +1,10 @@
 require('dotenv').config();
 const express = require("express");
+const { errors } = require('celebrate');
 const mongoose = require("mongoose");
 const cors = require("cors");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
-const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 
@@ -36,6 +36,4 @@ app.use(errors());
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(PORT);

@@ -38,7 +38,7 @@ module.exports.deleteClothingItems = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId) {
-        next(new ForbiddenError("You don't have permission to access this resource"));
+       return next(new ForbiddenError("You don't have permission to access this resource"));
       }
       return clothingItem.findByIdAndRemove(itemId)
       .then((deletedItem) => res.status(200).send(deletedItem))
