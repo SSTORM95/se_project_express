@@ -7,7 +7,7 @@ const ConflictError = require("../errors/conflictError");
 const UnauthorizedError = require("../errors/unauthorizedError");
 const NotFoundError = require("../errors/notFoundError");
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   return bcrypt
@@ -21,7 +21,7 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
-        
+
         next(new ConflictError('A user with this email already exists. Please choose a different email'));
       }
       if (err.name === "ValidationError") {
@@ -31,7 +31,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -55,7 +55,7 @@ module.exports.login = (req, res) => {
     });
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
 
   User.findById(userId)
@@ -75,7 +75,7 @@ module.exports.getCurrentUser = (req, res) => {
     });
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, avatar } = req.body;
 
   User.findByIdAndUpdate(

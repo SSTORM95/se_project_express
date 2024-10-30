@@ -3,7 +3,7 @@ const ForbiddenError = require("../errors/forbiddenError");
 const NotFoundError = require("../errors/notFoundError");
 const clothingItem = require("../models/clothingItem");
 
-module.exports.getClothingItems = (req, res) => {
+module.exports.getClothingItems = (req, res, next) => {
   clothingItem
     .find({})
     .then((clothingItems) => res.send(clothingItems))
@@ -12,7 +12,7 @@ module.exports.getClothingItems = (req, res) => {
     });
 };
 
-module.exports.createClothingItems = (req, res) => {
+module.exports.createClothingItems = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -29,7 +29,7 @@ module.exports.createClothingItems = (req, res) => {
     });
 };
 
-module.exports.deleteClothingItems = (req, res) => {
+module.exports.deleteClothingItems = (req, res, next) => {
   const { itemId } = req.params;
   const userId = req.user._id;
 
@@ -58,7 +58,7 @@ module.exports.deleteClothingItems = (req, res) => {
     });
 };
 
-module.exports.likeItem = (req, res) => {
+module.exports.likeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,
@@ -79,7 +79,7 @@ module.exports.likeItem = (req, res) => {
     });
 };
 
-module.exports.dislikeItem = (req, res) => {
+module.exports.dislikeItem = (req, res, next) => {
   clothingItem
     .findByIdAndUpdate(
       req.params.itemId,

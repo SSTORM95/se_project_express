@@ -26,7 +26,7 @@ module.exports.validateClothingItem = celebrate({
 
 module.exports.validateUserInfo = celebrate({
   body: Joi.object().keys({
-    username: Joi.string().min(2).max(30).required().messages({
+    name: Joi.string().min(2).max(30).required().messages({
       "string.empty": "Username cannot be empty.",
       "string.min": "Username should have a minimum length of 2 characters.",
       "string.max": "Username should have a maximum length of 30 characters.",
@@ -47,7 +47,7 @@ module.exports.validateUserInfo = celebrate({
 
 module.exports.validateUpdateUserInfo = celebrate({
   body: Joi.object().keys({
-    username: Joi.string().min(2).max(30).required().messages({
+    name: Joi.string().min(2).max(30).required().messages({
       "string.empty": "Username cannot be empty.",
       "string.min": "Username should have a minimum length of 2 characters.",
       "string.max": "Username should have a maximum length of 30 characters.",
@@ -73,7 +73,7 @@ module.exports.validateLogin = celebrate({
 
 module.exports.validateIds = celebrate({
   params: Joi.object().keys({
-    clothingItemId: Joi.string().length(24).hex().required().messages({
+    itemId: Joi.string().length(24).hex().required().messages({
       "string.length": "Clothing item ID must be 24 characters long.",
       "string.hex": "Clothing item ID must be a valid hexadecimal."
     }),
